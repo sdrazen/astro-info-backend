@@ -4,7 +4,7 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 
 // Global variables
 const databaseName = globals.DATABASE_NAME;
-const uri = globals.MONGODB_URI;
+const uri = "mongodb+srv://fritz75:Fritzy75@cluster0.kluf0jq.mongodb.net/?retryWrites=true&w=majority";
 const databaseTypeName = globals.DATABASE_TYPE_NAME;
 
 // Mongodb client
