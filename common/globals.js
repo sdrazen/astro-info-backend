@@ -12,7 +12,7 @@ const DATABASE_NAME = "astro-info-database";
 const COLLECTION_NAME = "locations";
 
 // MongoDb specific
-const MONGODB_URI = "mongodb+srv://fritz75:Fritzy75@cluster0.kluf0jq.mongodb.net/?retryWrites=true&w=majority"; // <YOUR-MONGODB-URI-HERE>
+const MONGODB_URI = process.env.MONGODB_URI; // <YOUR-MONGODB-URI-HERE>
 
 // SQLite3 specific
 const SQLITE_DB_LOCATION = "./databases/sqlite";
