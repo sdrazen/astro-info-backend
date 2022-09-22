@@ -21,4 +21,4 @@ Put appropriate values in `common/globals.js` file and you are good to go.
 
 ## Usage
 
-Modify code at your own taste, recreate the [database](https://github.com/sdrazen/astro-info/src/assets/data) or create your own and publish your new backend.
+Modify code at your own taste, recreate the [database](https://github.com/sdrazen/astro-info/tree/master/src/assets/data) or create your own and publish your new backend.
