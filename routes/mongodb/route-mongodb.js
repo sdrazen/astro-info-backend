@@ -3,6 +3,7 @@ const env = require('dotenv').config();
 const express = require('express');
 const { ObjectId } = require('mongodb');
 const router = express.Router();
+const https = require('https');
 
 // Global variables
 let collectionName = "";
@@ -10,8 +11,11 @@ let collectionName = "";
 // Database reference for chosen database type
 let db = require('../../databases/mongodb/db-mongodb');
 
+///////////
 // API info
-router.get('/info', (req, res, next) => {
+///////////
+
+router.get('/mongodb/info', (req, res, next) => {
   try {
     const result = {host: globals.HOST, port: globals.PORT, databasetype: globals.DATABASE_TYPE, databasetypename: globals.DATABASE_TYPE_NAME, databasename: globals.DATABASE_NAME, collectionname: globals.COLLECTION_NAME};
     res.send(result);
@@ -24,12 +28,283 @@ router.get('/info', (req, res, next) => {
   }
 });
 
+////////////////
+// Flickr photos
+////////////////
+
+router.get('/mongodb/flickr', (req, res, next) => {
+  
+  let tags = req.query.tags;
+
+  try {
+    
+    let api_key = globals.FLICKR_API_KEY;
+    let method = 'flickr.photos.search';
+    let per_page = '21'
+    let tag_mode = 'all' // any = OR, all = AND
+
+    https.get('https://api.flickr.com//services/rest/?format=json&sort=random&method=' + method + '&tags=' + tags + '&per_page=' + per_page + '&tag_mode=' + tag_mode + '&api_key=' + api_key + '&nojsoncallback=1', (resp) => {
+
+      let data = '';
+
+      // A chunk of data has been received.
+      resp.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      // The whole response has been received. Print out the result.
+      resp.on('end', () => {
+        res.status(200).send(data);
+      });
+
+    }).on("error", (err) => {
+      console.log("Error: " + err.message);
+    });    
+
+  } catch (err) {
+    console.log(err);
+
+  } finally {
+
+  }
+
+})
+
+////////////
+// Nasa APOD
+////////////
+
+router.get('/mongodb/apod', (req, res, next) => {
+  
+  try {
+    
+    let api_key = globals.NASA_API_KEY;
+
+    https.get('https://api.nasa.gov/planetary/apod?api_key=' + api_key, (resp) => {
+
+      let data = '';
+
+      // A chunk of data has been received.
+      resp.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      // The whole response has been received. Print out the result.
+      resp.on('end', () => {
+        res.status(200).send(data);
+      });
+
+    }).on("error", (err) => {
+      console.log("Error: " + err.message);
+    });    
+
+  } catch (err) {
+    console.log(err);
+
+  } finally {
+
+  }
+
+})
+
+///////////
+// Nasa NEO
+///////////
+
+router.get('/mongodb/neo', (req, res, next) => {
+
+  let start_date = req.query.start_date;
+  let end_date = req.query.end_date;
+
+  try {
+    
+    let api_key = globals.NASA_API_KEY;
+
+    https.get('https://api.nasa.gov/neo/rest/v1/feed?start_date=' + start_date + '&end_date=' + end_date + '&api_key=' + api_key, (resp) => {
+
+      let data = '';
+
+      // A chunk of data has been received.
+      resp.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      // The whole response has been received. Print out the result.
+      resp.on('end', () => {
+        res.status(200).send(data);
+      });
+
+    }).on("error", (err) => {
+      console.log("Error: " + err.message);
+    });    
+
+  } catch (err) {
+    console.log(err);
+
+  } finally {
+
+  }
+
+})
+
+///////////////////
+// Nasa NEO details
+///////////////////
+
+router.get('/mongodb/neodetails', (req, res, next) => {
+
+  let id = req.query.id;
+  
+  try {
+    
+    let api_key = globals.NASA_API_KEY;
+
+    https.get('https://api.nasa.gov/neo/rest/v1/neo/' + id + '?api_key=' + api_key, (resp) => {
+
+      let data = '';
+
+      // A chunk of data has been received.
+      resp.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      // The whole response has been received. Print out the result.
+      resp.on('end', () => {
+        res.status(200).send(data);
+      });
+
+    }).on("error", (err) => {
+      console.log("Error: " + err.message);
+    });    
+
+  } catch (err) {
+    console.log(err);
+
+  } finally {
+
+  }
+
+})
+
+//////////////////
+// Google timezone
+//////////////////
+
+router.get('/mongodb/timezone', (req, res, next) => {
+
+  let lat = req.query.lat;
+  let lng = req.query.lng;
+  let timestamp = req.query.timestamp;
+  
+  try {
+    
+    let api_key = globals.GOOGLE_MAPS_API_KEY;
+
+    https.get('https://maps.googleapis.com/maps/api/timezone/json?location=' + lat + ',' + lng + '&timestamp=' + timestamp.toString() + '&key=' + api_key, (resp) => {
+
+      let data = '';
+
+      // A chunk of data has been received.
+      resp.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      // The whole response has been received. Print out the result.
+      resp.on('end', () => {
+        res.status(200).send(data);
+      });
+
+    }).on("error", (err) => {
+      console.log("Error: " + err.message);
+    });    
+
+  } catch (err) {
+    console.log(err);
+
+  } finally {
+
+  }
+
+})
+
+//////
+// ISS
+//////
+
+router.get('/mongodb/iss', (req, res, next) => {
+
+  try {
+    
+    https.get('https://api.wheretheiss.at/v1/satellites/25544', (resp) => {
+
+      let data = '';
+
+      // A chunk of data has been received.
+      resp.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      // The whole response has been received. Print out the result.
+      resp.on('end', () => {
+        res.status(200).send(data);
+      });
+
+    }).on("error", (err) => {
+      console.log("Error: " + err.message);
+    });    
+
+  } catch (err) {
+    console.log(err);
+
+  } finally {
+
+  }
+
+})
+
+////////////
+// Wikipedia
+////////////
+
+router.get('/mongodb/wikipedia', (req, res, next) => {
+
+  let term = req.query.term;
+
+  try {
+    
+    https.get(`https://en.wikipedia.org/w/api.php?action=opensearch&origin=*&format=json&search=${term}&namespace=`, (resp) => {
+
+      let data = '';
+
+      // A chunk of data has been received.
+      resp.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      // The whole response has been received. Print out the result.
+      resp.on('end', () => {
+        res.status(200).send(data);
+      });
+
+    }).on("error", (err) => {
+      console.log("Error: " + err.message);
+    });    
+
+  } catch (err) {
+    console.log(err);
+
+  } finally {
+
+  }
+
+})
+
 //////
 // GET
 //////
 
 // Retrieving dsos
-router.get('/dsos', async (req, res, next) => {
+router.get('/mongodb/dsos', async (req, res, next) => {
   try {
     collectionName = "dsos";
     const cursor = db.collection(collectionName).find();
@@ -51,7 +326,7 @@ router.get('/dsos', async (req, res, next) => {
 });
 
 // Retrieving locations
-router.get('/locations', async (req, res, next) => {
+router.get('/mongodb/locations', async (req, res, next) => {
   collectionName = "locations";
   try {
     const cursor = db.collection(collectionName).find();
@@ -72,11 +347,33 @@ router.get('/locations', async (req, res, next) => {
   }
 });
 
-// Retrieving moonfeatures
-router.get('/moonfeatures', async (req, res, next) => {
+// Retrieving moonfeatures part one
+router.get('/mongodb/moonfeatures1', async (req, res, next) => {
   collectionName = "moonfeatures";
   try {
-    const cursor = db.collection(collectionName).find();
+    const cursor = db.collection(collectionName).find().limit(5000);
+    // Print a message if no documents were found
+    if ((await db.collection(collectionName).countDocuments() === 0)) {
+        console.log("No documents found!");
+    }
+    // Print found documents
+    const result = await cursor.toArray();
+    res.send(result);
+  }
+  catch (err) {
+      console.log("There was an error retrieving data: " + err);
+      res.send({error: err});
+  } 
+  finally {
+      // await client.close();
+  }
+});
+
+// Retrieving moonfeatures part two
+router.get('/mongodb/moonfeatures2', async (req, res, next) => {
+  collectionName = "moonfeatures";
+  try {
+    const cursor = db.collection(collectionName).find().skip(5000);
     // Print a message if no documents were found
     if ((await db.collection(collectionName).countDocuments() === 0)) {
         console.log("No documents found!");
@@ -95,7 +392,7 @@ router.get('/moonfeatures', async (req, res, next) => {
 });
 
 // Retrieving lunareclipses
-router.get('/lunareclipses', async (req, res, next) => {
+router.get('/mongodb/lunareclipses', async (req, res, next) => {
   collectionName = "lunareclipses";
   try {
     const cursor = db.collection(collectionName).find();
@@ -117,7 +414,7 @@ router.get('/lunareclipses', async (req, res, next) => {
 });
 
 // Retrieving solareclipses
-router.get('/solareclipses', async (req, res, next) => {
+router.get('/mongodb/solareclipses', async (req, res, next) => {
   collectionName = "solareclipses";
   try {
     const cursor = db.collection(collectionName).find();
@@ -139,7 +436,7 @@ router.get('/solareclipses', async (req, res, next) => {
 });
 
 // Retrieving stores
-router.get('/stores', async (req, res, next) => {
+router.get('/mongodb/stores', async (req, res, next) => {
   collectionName = "stores";
   try {
     const cursor = db.collection(collectionName).find();
@@ -165,7 +462,7 @@ router.get('/stores', async (req, res, next) => {
 ///////
 
 // Add location
-router.post('/location', async (req, res, next) => {
+router.post('/mongodb/location', async (req, res, next) => {
   collectionName = "locations";
   let newLocation = {"locationaddedbyemail": req.body.locationaddedbyemail, "locationcomment": req.body.locationcomment, "locationcountry": req.body.locationcountry, "locationmarker": {"markerlat": req.body.locationmarker.markerlat, "markerlng": req.body.locationmarker.markerlng}, "locationsqm": req.body.locationsqm};
   try {
@@ -182,7 +479,7 @@ router.post('/location', async (req, res, next) => {
 });
 
 // Add store
-router.post('/store', async (req, res, next) => {
+router.post('/mongodb/store', async (req, res, next) => {
   collectionName = "stores";
   let newStore = {"storeaddedbyemail": req.body.storeaddedbyemail, "storeaddress": req.body.storeaddress, "storecity": req.body.storecity, "storecomment": req.body.storecomment, "storecountry": req.body.storecountry, "storemarker": {"markerlat": req.body.storemarker.markerlat, "markerlng": req.body.storemarker.markerlng}, "storename": req.body.storename, "storepostalcode": req.body.storepostalcode};
   try {
@@ -203,7 +500,7 @@ router.post('/store', async (req, res, next) => {
 /////////
 
 // Delete location
-router.delete('/location/:id', async (req, res, next) => {
+router.delete('/mongodb/location/:id', async (req, res, next) => {
   collectionName = "locations";
   let id = req.params.id;
   try {
@@ -225,7 +522,7 @@ router.delete('/location/:id', async (req, res, next) => {
 });
 
 // Delete store
-router.delete('/store/:id', async (req, res, next) => {
+router.delete('/mongodb/store/:id', async (req, res, next) => {
   collectionName = "stores";
   let id = req.params.id;
   try {
@@ -251,7 +548,7 @@ router.delete('/store/:id', async (req, res, next) => {
 //////
 
 // Update location
-router.put('/location/:id', async (req, res, next) => {
+router.put('/mongodb/location/:id', async (req, res, next) => {
   collectionName = "locations";
   let id = req.params.id;
   let updatedLocation = {"locationaddedbyemail": req.body.locationaddedbyemail, "locationcomment": req.body.locationcomment, "locationcountry": req.body.locationcountry, "locationmarker": {"markerlat": req.body.locationmarker.markerlat, "markerlng": req.body.locationmarker.markerlng}, "locationsqm": req.body.locationsqm};
@@ -275,7 +572,7 @@ router.put('/location/:id', async (req, res, next) => {
 });
 
 // Update store
-router.put('/store/:id', async (req, res, next) => {
+router.put('/mongodb/store/:id', async (req, res, next) => {
   collectionName = "stores";
   let id = req.params.id;
   let updatedStore = {"storeaddedbyemail": req.body.storeaddedbyemail, "storeaddress": req.body.storeaddress, "storecity": req.body.storecity, "storecomment": req.body.storecomment, "storecountry": req.body.storecountry, "storemarker": {"markerlat": req.body.storemarker.markerlat, "markerlng": req.body.storemarker.markerlng}, "storename": req.body.storename, "storepostalcode": req.body.storepostalcode};

@@ -14,6 +14,15 @@ const COLLECTION_NAME = "locations";
 // MongoDb specific
 const MONGODB_URI = process.env.MONGODB_URI; // <YOUR-MONGODB-URI-HERE>
 
+// Flickr API key
+const FLICKR_API_KEY = process.env.FLICKR_API_KEY; // <YOUR-FLICKR-API-KEY-HERE>
+
+// NASA API key
+const NASA_API_KEY = process.env.NASA_API_KEY; // <YOUR-NASA-API-KEY-HERE>
+
+// Google Maps API key
+const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY; // <YOUR-GOOGLE-MAPS-API-KEY-HERE>
+
 // SQLite3 specific
 const SQLITE_DB_LOCATION = "./databases/sqlite";
 
@@ -50,6 +59,9 @@ module.exports = {
   DATABASE_NAME,
   COLLECTION_NAME,
   MONGODB_URI,
+  FLICKR_API_KEY,
+  NASA_API_KEY,
+  GOOGLE_MAPS_API_KEY,
   SQLITE_DB_LOCATION,
   MYSQL_HOST,
   MYSQL_PORT,
